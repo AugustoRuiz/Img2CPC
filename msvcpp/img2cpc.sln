@@ -1,0 +1,62 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "img2cpc", "img2cpc.vcxproj", "{97511E4D-69E9-47D9-B2AD-CC1CA60D3DB9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{127D032E-1E29-4BB4-ADC1-775A2449F8AC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "lib", "lib", "{2EDA41BF-A6B8-4EE3-ABE7-C01537AFFD9F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "x32", "x32", "{46ACA3BC-0E00-4E75-9199-48A84363566A}"
+	ProjectSection(SolutionItems) = preProject
+		..\lib\win\x32\FreeImage.lib = ..\lib\win\x32\FreeImage.lib
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "x64", "x64", "{81935DEE-6E17-4537-B7EF-BFA3428DC28C}"
+	ProjectSection(SolutionItems) = preProject
+		..\lib\win\x64\FreeImage.lib = ..\lib\win\x64\FreeImage.lib
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "bin", "bin", "{6D17E321-BA78-4D1E-9757-27FC6F08F57E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "x32", "x32", "{6F7AFCB8-C67D-4643-A210-6293A9DC16DE}"
+	ProjectSection(SolutionItems) = preProject
+		..\bin\x32\FreeImage.dll = ..\bin\x32\FreeImage.dll
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "x64", "x64", "{F62D9C0A-9BFB-4512-A671-CF1EF546CFB7}"
+	ProjectSection(SolutionItems) = preProject
+		..\bin\x64\FreeImage.dll = ..\bin\x64\FreeImage.dll
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{97511E4D-69E9-47D9-B2AD-CC1CA60D3DB9}.Debug|x64.ActiveCfg = Debug|x64
+		{97511E4D-69E9-47D9-B2AD-CC1CA60D3DB9}.Debug|x64.Build.0 = Debug|x64
+		{97511E4D-69E9-47D9-B2AD-CC1CA60D3DB9}.Debug|x86.ActiveCfg = Debug|Win32
+		{97511E4D-69E9-47D9-B2AD-CC1CA60D3DB9}.Debug|x86.Build.0 = Debug|Win32
+		{97511E4D-69E9-47D9-B2AD-CC1CA60D3DB9}.Release|x64.ActiveCfg = Release|x64
+		{97511E4D-69E9-47D9-B2AD-CC1CA60D3DB9}.Release|x64.Build.0 = Release|x64
+		{97511E4D-69E9-47D9-B2AD-CC1CA60D3DB9}.Release|x86.ActiveCfg = Release|Win32
+		{97511E4D-69E9-47D9-B2AD-CC1CA60D3DB9}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{2EDA41BF-A6B8-4EE3-ABE7-C01537AFFD9F} = {127D032E-1E29-4BB4-ADC1-775A2449F8AC}
+		{46ACA3BC-0E00-4E75-9199-48A84363566A} = {2EDA41BF-A6B8-4EE3-ABE7-C01537AFFD9F}
+		{81935DEE-6E17-4537-B7EF-BFA3428DC28C} = {2EDA41BF-A6B8-4EE3-ABE7-C01537AFFD9F}
+		{6D17E321-BA78-4D1E-9757-27FC6F08F57E} = {127D032E-1E29-4BB4-ADC1-775A2449F8AC}
+		{6F7AFCB8-C67D-4643-A210-6293A9DC16DE} = {6D17E321-BA78-4D1E-9757-27FC6F08F57E}
+		{F62D9C0A-9BFB-4512-A671-CF1EF546CFB7} = {6D17E321-BA78-4D1E-9757-27FC6F08F57E}
+	EndGlobalSection
+EndGlobal
