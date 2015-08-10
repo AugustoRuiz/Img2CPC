@@ -4,7 +4,7 @@ Tool to convert images in a lot of formats to data that can be used in Amstrad C
 img2cpc - (c) 2007-2015 Retroworks.
 
 ## Usage
-```img2cpc [OPTIONS] fileNames
+`img2cpc [OPTIONS] fileNames`
 
 ## Options
 `--help`
@@ -71,21 +71,21 @@ Zigzag. Generate data in zigzag order.
 
 ## Examples
 
-img2cpc -w 8 -h 8 --outputFormat asm -bn tile -m 0 tiles.png
+`img2cpc -w 8 -h 8 --outputFormat asm -bn tile -m 0 tiles.png`
 
-Paleta en src/config_rgb.json, salida en formato C, mode 0, fichero de salida gfx.c, generar PNGs, nombre base: tile, tiles de 32x32.
-```img2cpc -p src/config_rgb.json -of c -m 0 -o gfx.c -g -bn tile -h 32 -w 32 bee.png
+Use palette in `src/config_rgb.json`, output C format, images in mode 0, output file name `gfx.c`, create PNGs, base name: tile, tile size 32x32.
+`img2cpc -p src/config_rgb.json -of c -m 0 -o gfx.c -g -bn tile -h 32 -w 32 bee.png`
 
-Paleta en src/config_rgb.json, el color transparente es el 0, salida en formato C, mode 0, fichero de salida gfx.c, generar PNGs, nombre base: tile, tiles de 32x32.
-```img2cpc -p src/config_rgb.json -t 0 -of c -m 0 -o gfx.c -g -bn tile -h 32 -w 32 bee.png
+Use palette in `src/config_rgb.json`, transparent color is 0, output C format, images in mode 0, output file name `gfx.c`, create PNGs, base name: tile, tile size 32x32.
+`img2cpc -p src/config_rgb.json -t 0 -of c -m 0 -o gfx.c -g -bn tile -h 32 -w 32 bee.png`
 
-Paleta en src/config_rgb.json, el color transparente es el 12, salida en formato ASM, mode 0, fichero de salida gfx.s, 1 unico tile.
-```img2cpc -p src/config_rgb.json -t 12 -of asm -m 0 -o gfx.s RYU_STAND_0.png
+Use palette in `src/config_rgb.json`, transparent color is 12, output ASM format, images in mode 0, output file name `gfx.s`, one tile in image.
+`img2cpc -p src/config_rgb.json -t 12 -of asm -m 0 -o gfx.s RYU_STAND_0.png`
 
-Paleta en src/config_rgb.json, el color transparente es el 12, salida en formato ASM, mode 0, fichero de salida gfx.s, datos en zigzag, 1 unico tile.
-```img2cpc -p src/config_rgb.json -t 12 -of asm -m 0 -o gfx.s -z RYU_STAND_0.png
+Use palette in `src/config_rgb.json`, transparent color is 12, output ASM format, images in mode 0, output file name `gfx.s`, one tile in image, data in zigzag.
+`img2cpc -p src/config_rgb.json -t 12 -of asm -m 0 -o gfx.s -z RYU_STAND_0.png`
 
-Paleta en src/config_rgb.json, el color transparente es el 12, salida en formato ASM, mode 0, fichero de salida gfx.s, datos en zigzag, orden de scanlines: 0,1,2,3,7,6,5,4, 1 unico tile.
-```img2cpc -p src/config_rgb.json -t 12 -of asm -m 0 -o gfx.s -z -s 0,1,2,3,7,6,5,4 RYU_STAND_0.png
+Use palette in `src/config_rgb.json`, transparent color is 12, output ASM format, images in mode 0, output file name `gfx.s`, one tile in image, data in zigzag, scanline order `0, 1, 2, 3, 7, 6, 5, 4`.
+`img2cpc -p src/config_rgb.json -t 12 -of asm -m 0 -o gfx.s -z -s 0,1,2,3,7,6,5,4 RYU_STAND_0.png`
 
 If you liked this program, drop an email at: `augusto.ruiz@gmail.com`
