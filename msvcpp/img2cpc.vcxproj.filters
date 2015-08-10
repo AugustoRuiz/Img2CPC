@@ -1,0 +1,103 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\src\img2cpc.cc">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\jsoncpp.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Palette.cc">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\TileExtractor.cc">
+      <Filter>Source</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\include\Color.hpp">
+      <Filter>Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ColorAndMaskValues.hpp">
+      <Filter>Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ColorCombinator.hpp">
+      <Filter>Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ConversionOptions.hpp">
+      <Filter>Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ezOptionParser.hpp">
+      <Filter>Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\FileUtils.hpp">
+      <Filter>Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\FreeImage.hpp">
+      <Filter>Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\img2cpc.hpp">
+      <Filter>Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\json\json.h">
+      <Filter>Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\json\json-forwards.h">
+      <Filter>Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Palette.hpp">
+      <Filter>Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Tile.hpp">
+      <Filter>Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\outputGenerator.hpp">
+      <Filter>Includes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\TileExtractor.hpp">
+      <Filter>Includes</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="..\lib\win\x64\FreeImage.lib">
+      <Filter>Lib\x64</Filter>
+    </Library>
+    <Library Include="..\lib\win\x32\FreeImage.lib">
+      <Filter>Lib\x86</Filter>
+    </Library>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\bin\x64\FreeImage.dll">
+      <Filter>Bin\x64</Filter>
+    </None>
+    <None Include="..\bin\x32\FreeImage.dll">
+      <Filter>Bin\x86</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Includes">
+      <UniqueIdentifier>{ccfc41e1-c3e0-4e24-9eda-05ce92c28032}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source">
+      <UniqueIdentifier>{4dc4e535-db95-4a2f-9500-0e3f74869058}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib">
+      <UniqueIdentifier>{04e146a9-5c79-47ad-bd66-7b43b0a11110}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Bin">
+      <UniqueIdentifier>{344638a0-6eb8-4b6d-86d2-17e26219ac15}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib\x86">
+      <UniqueIdentifier>{a2a54dc9-ae43-4be4-b500-b368cce4b991}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Bin\x64">
+      <UniqueIdentifier>{7d8f0a26-0a55-486c-a456-6d8d929aec84}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Bin\x86">
+      <UniqueIdentifier>{fe489185-18f2-45cf-a116-885d3773c69b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib\x64">
+      <UniqueIdentifier>{41b5196e-235e-4e1c-86ab-8e7ea72026d3}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
