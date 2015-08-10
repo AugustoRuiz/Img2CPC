@@ -73,6 +73,8 @@
     <None Include="..\bin\x32\FreeImage.dll">
       <Filter>Bin\x86</Filter>
     </None>
+    <None Include="..\LICENSE" />
+    <None Include="..\README.md" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Includes">

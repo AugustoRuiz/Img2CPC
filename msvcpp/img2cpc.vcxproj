@@ -158,6 +158,8 @@
   <ItemGroup>
     <None Include="..\bin\x32\FreeImage.dll" />
     <None Include="..\bin\x64\FreeImage.dll" />
+    <None Include="..\LICENSE" />
+    <None Include="..\README.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
