@@ -31,6 +31,7 @@ vector<Tile> TileExtractor::GetTiles(const string &fileName) {
 
 				FIBITMAP *tileBitmap = FreeImage_Copy(dib, imgPosX, imgPosY, imgPosX + realTileWidth, imgPosY + realTileHeight);
 				Tile theTile = this->getTile(tileBitmap);
+				theTile.SourceFileName = fileName;
 				FreeImage_Unload(tileBitmap);
 
 				theTile.TileHeight = this->TileHeight;

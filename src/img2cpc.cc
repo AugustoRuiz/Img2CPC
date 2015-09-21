@@ -16,7 +16,7 @@ int initializeParser(ezOptionParser &parser) {
 
 	parser.add("0", 0, 1, 0, "Specifies the CPC Mode to generate data for. Valid values are 0 (default), 1 or 2.", "-m", "--mode");
 	parser.add("", 0, 0, 0, "Generate tile map", "-map", "--tilemap");
-	parser.add("gfx", 0, 1, 0, "Output file name. Default value is gfx. img2cpc will append the proper extension based on format.", "-o", "--outputFileName");
+	parser.add("", 0, 1, 0, "Output file name. img2cpc will append the proper extension based on format.", "-o", "--outputFileName");
 	parser.add("", 0, 1, ',', "Scanline order. Default value is 01234567", "-s", "--scanlineOrder");
 	parser.add("", 0, 0, 0, "Zigzag. Generate data in zigzag order.", "-z", "--zigzag");
 
@@ -29,10 +29,11 @@ int initializeParser(ezOptionParser &parser) {
 
 	parser.add("", 0, 0, 0, "Don't create tileset. Use this if you are creating sprites and do not need a table with all the tile pointers.", "-nt", "--noTileset");
 
-	parser.add("", 0, 0, 0, "Output palette (hardware values)", "-ophw");
-	parser.add("", 0, 0, 0, "Output palette (firmware values)", "-opfw");
+	parser.add("", 0, 0, 0, "Output palette (hardware values).", "-ophw");
+	parser.add("", 0, 0, 0, "Output palette (firmware values).", "-opfw");
 
 	parser.add("", 0, 0, 0, "Generates PNG images to check tile output.", "-g", "--generatePNG");
+	parser.add("", 0, 0, 0, "Generate one output file per processed file. Files will be named using the base name (if specified) and the source file name .", "--oneFile");
 
 	parser.add("", 0, 0, 0, "Help. Show usage.", "--help");
 
@@ -68,21 +69,49 @@ int processImage(const string& filename, vector<Tile>& tiles, ConversionOptions 
 }
 
 int dumpTiles(vector<Tile>& tiles, ConversionOptions &convOptions) {
-	OutputGenerator generator;
-	switch (convOptions.Format) {
-	case ConversionOptions::ASSEMBLER:
-		generator.GenerateASM(tiles, convOptions);
-		break;
-	case ConversionOptions::ASSEMBLER_ASXXXX:
-		generator.GenerateASXXXX(tiles, convOptions);
-		break;
-	case ConversionOptions::BINARY:
-		generator.GenerateBIN(tiles, convOptions);
-		break;
-	case ConversionOptions::PURE_C:
-		generator.GenerateC(tiles, convOptions);
-		generator.GenerateH(tiles, convOptions);
-		break;
+	if(!tiles.empty()) {
+		OutputGenerator generator;	
+		string outputName = convOptions.OutputFileName;
+		string currentFileName;
+		vector<Tile> currentTiles;
+		vector<Tile>::iterator it = tiles.begin();
+
+		do {
+			if(convOptions.OneFilePerSourceFile) {
+				currentFileName = it->SourceFileName;
+				currentTiles.clear();
+				stringstream ss;
+				if(!outputName.empty()) {
+					ss << outputName;					
+				}
+				ss << FileUtils::RemoveExtension(currentFileName);
+				convOptions.OutputFileName = ss.str();
+
+				while(it!=tiles.end() && it->SourceFileName == currentFileName) {
+					currentTiles.push_back(*it);
+					it++;
+				}
+			} else {
+				it = tiles.end();
+				currentTiles.insert(currentTiles.end(), tiles.begin(), tiles.end());
+			}
+
+			switch (convOptions.Format) {
+			case ConversionOptions::ASSEMBLER:
+				generator.GenerateASM(currentTiles, convOptions);
+				break;
+			case ConversionOptions::ASSEMBLER_ASXXXX:
+				generator.GenerateASXXXX(currentTiles, convOptions);
+				break;
+			case ConversionOptions::BINARY:
+				generator.GenerateBIN(currentTiles, convOptions);
+				break;
+			case ConversionOptions::PURE_C:
+				generator.GenerateC(currentTiles, convOptions);
+				generator.GenerateH(currentTiles, convOptions);
+				break;
+			}		
+		} while(it != tiles.end());
 	}
 	return 0;
 }
@@ -134,6 +163,7 @@ int extractConversionOptions(ezOptionParser &options, ConversionOptions &convOpt
 	result = extractPalette(options, convOptions.Palette);
 	if (!result) {
 		convOptions.CreateTileset = !(options.isSet("-nt"));
+		convOptions.OneFilePerSourceFile = options.isSet("--oneFile");
 
 		convOptions.PaletteFormat = ConversionOptions::NONE;
 		if (options.isSet("-ophw")) {
@@ -166,7 +196,12 @@ int extractConversionOptions(ezOptionParser &options, ConversionOptions &convOpt
 				<< "CPC Mode must be 0, 1 or 2." << endl;
 		}
 
-		options.get("-o")->getString(convOptions.OutputFileName);
+		if(options.isSet("-o")) {
+			options.get("-o")->getString(convOptions.OutputFileName);			
+		} else if(!convOptions.OneFilePerSourceFile) {
+			// If one file per source file, empty file name is allowed.
+			convOptions.OutputFileName = "gfx";
+		}
 
 		if (options.isSet("-s")) {
 			convOptions.ScanlineOrder.clear();

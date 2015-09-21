@@ -54,6 +54,7 @@ public:
 	OutputPalette PaletteFormat;
 
 	bool CreateTileset;
+	bool OneFilePerSourceFile;
 
 	OutputFormat ParseFormat(const string &formatString) {
 		string fmtLower(formatString);
