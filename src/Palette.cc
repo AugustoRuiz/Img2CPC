@@ -21,7 +21,7 @@ vector<int> TPalette::GetPaletteAsFW() {
 		double currentDistance = numeric_limits<double>::max();
 		int fwColor = -1;
 		for (int fwIdx = 0, lFwIdx = TPalette::Firmware.size(); fwIdx<lFwIdx; ++fwIdx) {
-			double dist = color.Distance(this->Current[fwIdx]);
+			double dist = color.Distance(TPalette::Firmware[fwIdx]);
 			if (dist < currentDistance) {
 				currentDistance = dist;
 				fwColor = fwIdx;

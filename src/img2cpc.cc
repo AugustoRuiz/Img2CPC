@@ -27,6 +27,8 @@ int initializeParser(ezOptionParser &parser) {
 	parser.add("", 0, 1, 0, "Specifies transparent color (as index in palette).", "-t", "--transparentColor");
 	parser.add("", 0, 0, 0, "Interlaced masks. Mask values will be interlaced with pixel values.", "-im", "--interlacedMasks");
 
+	parser.add("", 0, 0, 0, "Don't create tileset. Use this if you are creating sprites and do not need a table with all the tile pointers.", "-nt", "--noTileset");
+
 	parser.add("", 0, 0, 0, "Output palette (hardware values)", "-ophw");
 	parser.add("", 0, 0, 0, "Output palette (firmware values)", "-opfw");
 
@@ -48,11 +50,11 @@ int initializeImageLoader() {
 	return 0;
 }
 
-int processImage(const string& filename, ConversionOptions &convOptions, ezOptionParser &options) {
+int processImage(const string& filename, vector<Tile>& tiles, ConversionOptions &convOptions, ezOptionParser &options) {
 	TileExtractor extractor;
 	extractor.Options = convOptions;
-	vector<Tile> tiles = extractor.GetTiles(filename);
-	for (Tile t : tiles) {
+	vector<Tile> tmp = extractor.GetTiles(filename);
+	for (Tile t : tmp) {
 		//t.Dump();
 		if (options.isSet("-g")) {
 			t.GenImage();
@@ -61,11 +63,18 @@ int processImage(const string& filename, ConversionOptions &convOptions, ezOptio
 			}
 		}
 	}
+	tiles.insert(tiles.end(), tmp.begin(), tmp.end());
+	return 0;
+}
 
+int dumpTiles(vector<Tile>& tiles, ConversionOptions &convOptions) {
 	OutputGenerator generator;
 	switch (convOptions.Format) {
 	case ConversionOptions::ASSEMBLER:
 		generator.GenerateASM(tiles, convOptions);
+		break;
+	case ConversionOptions::ASSEMBLER_ASXXXX:
+		generator.GenerateASXXXX(tiles, convOptions);
 		break;
 	case ConversionOptions::BINARY:
 		generator.GenerateBIN(tiles, convOptions);
@@ -75,7 +84,6 @@ int processImage(const string& filename, ConversionOptions &convOptions, ezOptio
 		generator.GenerateH(tiles, convOptions);
 		break;
 	}
-
 	return 0;
 }
 
@@ -125,6 +133,8 @@ int extractConversionOptions(ezOptionParser &options, ConversionOptions &convOpt
 	int result = 0;
 	result = extractPalette(options, convOptions.Palette);
 	if (!result) {
+		convOptions.CreateTileset = !(options.isSet("-nt"));
+
 		convOptions.PaletteFormat = ConversionOptions::NONE;
 		if (options.isSet("-ophw")) {
 			convOptions.PaletteFormat = ConversionOptions::HARDWARE;
@@ -199,14 +209,18 @@ int main(int argc, const char** argv)
 	//convOptions.Dump();
 
 	vector<string *> &lastArgs = options.lastArgs;
+	vector<Tile> tiles;
+
 	for (long int i = 0, li = lastArgs.size(); i < li; ++i) {
 		string filename = *lastArgs[i];
-		int result = processImage(filename, convOptions, options);
+		int result = processImage(filename, tiles, convOptions, options);
 		if (result) {
 			cout << "Error processing image: " << filename << endl;
 			return result;
 		}
 	}
 
+	dumpTiles(tiles, convOptions);
+	
 	return 0;
 }

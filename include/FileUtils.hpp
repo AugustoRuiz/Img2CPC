@@ -14,12 +14,12 @@ public:
     size_t slashPos = result.rfind("/");
     if(slashPos != string::npos) {
       // remove until slash.
-      result = result.substr(slashPos, string::npos);
+      result = result.substr(slashPos + 1, string::npos);
     }
     slashPos = result.rfind("\\");
 
     if(slashPos != string::npos) {
-      result = result.substr(slashPos, string::npos);
+      result = result.substr(slashPos + 1, string::npos);
     }
 
     size_t dotPos = result.rfind(".");
@@ -31,7 +31,9 @@ public:
 
   static string Sanitize(const string &name) {
     string result(name);
-    replace_if(result.begin(), result.end(), [](const char c) { return !isalnum(c); }, '_');
+    if(!name.empty()) {
+      replace_if(result.begin(), result.end(), [](const char c) { return !isalnum(c); }, '_');      
+    }
     return result;
   };
 

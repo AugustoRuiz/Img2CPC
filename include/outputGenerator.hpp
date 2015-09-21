@@ -39,7 +39,33 @@ public:
 		unsigned int numColors = palette.size();
 		if (numColors > 0) {
 			ofs << "; Palette uses " << ConversionOptions::ToString(options.PaletteFormat) << " values." << endl;
-			ofs << options.BaseName << "_palette:" << endl << "DEFB ";
+			
+			if(!options.BaseName.empty()) {
+				ofs << options.BaseName << "_";
+			}
+			ofs << "palette:" << endl << "DEFB ";
+			
+			for (unsigned int i = 0; i<numColors; ++i) {
+				if (i > 0) {
+					ofs << ", ";
+				}
+				ofs << "#" << toHexString(palette[i]);
+			}
+			ofs << endl << endl;
+		}
+	}
+
+	void DumpPaletteASXXXX(ConversionOptions &options, ofstream &ofs) {
+		vector<int> palette = GetPaletteValues(options);
+		unsigned int numColors = palette.size();
+		if (numColors > 0) {
+			ofs << "; Palette uses " << ConversionOptions::ToString(options.PaletteFormat) << " values." << endl;
+			
+			if(!options.BaseName.empty()) {
+				ofs << "_" << options.BaseName << "_";
+			}
+			ofs << "palette::" << endl << ".db ";
+
 			for (unsigned int i = 0; i<numColors; ++i) {
 				if (i > 0) {
 					ofs << ", ";
@@ -62,7 +88,39 @@ public:
 			}
 			ofs << endl << endl;
 			if (options.Palette.TransparentIndex >= 0 && !options.InterlaceMasks) {
-				ofs << options.BaseName << "_masks_tilemap:" << endl << "DEFW ";
+				
+				if(!options.BaseName.empty()) {
+					ofs << options.BaseName << "_";
+				}
+				ofs << "masks_tilemap:" << endl << "DEFW ";
+				
+				for (unsigned int i = 0; i < numTiles; ++i) {
+					if (i > 0) {
+						ofs << ", ";
+					}
+					ofs << tiles[i].Name << "_mask";
+				}
+				ofs << endl << endl;
+			}
+		}
+	}
+
+	void DumpTileMapASXXXX(vector<Tile> tiles, ConversionOptions &options, ofstream &ofs) {
+		unsigned int numTiles = tiles.size();
+		if (numTiles > 0) {
+			ofs << "_" << options.BaseName << "tilemap::" << endl << ".dw ";
+			for (unsigned int i = 0; i < numTiles; ++i) {
+				if (i > 0) {
+					ofs << ", ";
+				}
+				ofs << tiles[i].Name;
+			}
+			ofs << endl << endl;
+			if (options.Palette.TransparentIndex >= 0 && !options.InterlaceMasks) {
+				if(!options.BaseName.empty()) {
+					ofs << "_" << options.BaseName;	
+				}
+				ofs << "_masks_tilemap::" << endl << ".dw ";
 				for (unsigned int i = 0; i < numTiles; ++i) {
 					if (i > 0) {
 						ofs << ", ";
@@ -83,7 +141,10 @@ public:
 
 		ofs << "; Data created with Img2CPC - (c) Retroworks - 2007-2015" << endl;
 		DumpPaletteASM(options, ofs);
-		DumpTileMap(tiles, options, ofs);
+
+		if(options.CreateTileset) {
+			DumpTileMap(tiles, options, ofs);			
+		}
 
 		for (Tile t : tiles) {
 			int numBytes = t.Data.size();
@@ -133,6 +194,68 @@ public:
 		ofs.close();
 	};
 
+	void GenerateASXXXX(vector<Tile> tiles, ConversionOptions &options) {
+		stringstream ss;
+		ss << options.OutputFileName << ".s";
+		string fileName = ss.str();
+
+		ofstream ofs(fileName);
+
+		ofs << "; Data created with Img2CPC - (c) Retroworks - 2007-2015" << endl;
+		DumpPaletteASXXXX(options, ofs);
+
+		if(options.CreateTileset) {
+			DumpTileMapASXXXX(tiles, options, ofs);			
+		}
+
+		for (Tile t : tiles) {
+			int numBytes = t.Data.size();
+			if (numBytes > 0) {
+				ofs << "; Tile " << t.Name << " - " << t.TileWidth << "x" << t.TileHeight << " pixels, " << t.TileWidthInBytes << "x" << t.TileHeight << " bytes." << endl;
+				ofs << t.Name << "::" << endl;
+				if (options.InterlaceMasks) {
+					int currentByte = 0;
+					for (int y = 0; y<t.TileHeight; ++y) {
+						ofs << ".dw #0x" << toHexString(t.MaskData[currentByte]) << ", #0x" << toHexString(t.Data[currentByte]);
+						currentByte++;
+						for (int x = 0; x<t.TileWidthInBytes - 1; ++x) {
+							ofs << ", #0x" << toHexString(t.MaskData[currentByte]) << ", #0x" << toHexString(t.Data[currentByte]);
+							currentByte++;
+						}
+						ofs << endl;
+					}
+				}
+				else {
+					int currentByte = 0;
+					for (int y = 0; y<t.TileHeight; ++y) {
+						ofs << ".db #0x" << toHexString(t.Data[currentByte]);
+						currentByte++;
+						for (int x = 0; x<t.TileWidthInBytes - 1; ++x) {
+							ofs << ", #0x" << toHexString(t.Data[currentByte]);
+							currentByte++;
+						}
+						ofs << endl;
+					}
+					if (options.Palette.TransparentIndex >= 0) {
+						currentByte = 0;
+						ofs << t.Name << "_MASK::" << endl;
+						for (int y = 0; y<t.TileHeight; ++y) {
+							ofs << ".db #0x" << toHexString(t.MaskData[currentByte]);
+							currentByte++;
+							for (int x = 0; x<t.TileWidthInBytes - 1; ++x) {
+								ofs << ", #0x" << toHexString(t.MaskData[currentByte]);
+								currentByte++;
+							}
+							ofs << endl;
+						}
+					}
+				}
+				ofs << endl;
+			}
+		}
+		ofs.close();
+	};
+
 	void GenerateBIN(vector<Tile> tiles, ConversionOptions &options) {
 		stringstream ss;
 		ss << options.OutputFileName << ".asm";
@@ -142,7 +265,10 @@ public:
 		os << "; Data created with Img2CPC - (c) Retroworks - 2007-2015" << endl;
 		
 		DumpPaletteASM(options, os);
-		DumpTileMap(tiles, options, os);
+		
+		if(options.CreateTileset) {
+			DumpTileMap(tiles, options, os);
+		}
 
 		unsigned int numTiles = tiles.size();
 		if (numTiles > 0) {
@@ -210,12 +336,26 @@ public:
 			vector<int> palette = GetPaletteValues(options);
 			unsigned int numColors = palette.size();
 			if (numColors > 0) {
-				ofs << "extern const u8 " << options.BaseName << "_palette[" << numColors << "];" << endl << endl;
+				ofs << "extern const u8 ";
+				if(!options.BaseName.empty()) {
+					ofs << options.BaseName << "_";
+				}
+				ofs << "palette[" << numColors << "];" << endl << endl;
 			}
 
-			ofs << "extern u8* const " << options.BaseName << "_tilemap[" << numTiles << "];" << endl << endl;
-			if (!options.InterlaceMasks && options.Palette.TransparentIndex >= 0) {
-				ofs << "extern u8* const " << options.BaseName << "_masks_tilemap[" << numTiles << "];" << endl << endl;
+			if(options.CreateTileset) {
+				ofs << "extern u8* const " ;
+				if(!options.BaseName.empty()) {
+					ofs << options.BaseName << "_";
+				}
+				ofs << "tilemap[" << numTiles << "];" << endl << endl;
+				if (!options.InterlaceMasks && options.Palette.TransparentIndex >= 0) {
+					ofs << "extern u8* const "; 
+					if(!options.BaseName.empty()) {
+						ofs << options.BaseName << "_";						
+					}
+					ofs << "masks_tilemap[" << numTiles << "];" << endl << endl;
+				}
 			}
 
 			for (Tile t : tiles) {
@@ -250,7 +390,11 @@ public:
 		if (numColors > 0) {
 			ofs << "// Palette uses " << ConversionOptions::ToString(options.PaletteFormat) << " values." << endl;
 
-			ofs << "const u8 " << options.BaseName << "_palette[" << numColors << "] = { ";
+			ofs << "const u8 ";
+			if(!options.BaseName.empty()) { 
+				ofs << options.BaseName << "_";
+			}
+			ofs << "palette[" << numColors << "] = { ";
 			for (unsigned int i = 0; i<numColors; ++i) {
 				if (i > 0) {
 					ofs << ", ";
@@ -262,25 +406,32 @@ public:
 
 		unsigned int numTiles = tiles.size();
 		if (numTiles > 0) {
-			ofs << "u8* const " << options.BaseName << "_tilemap[" << numTiles << "] = { " << endl << "\t";
-			for (unsigned int i = 0; i<numTiles; ++i) {
-				if (i > 0) {
-					ofs << ", ";
+
+			if(options.CreateTileset) {
+				ofs << "u8* const ";
+				if(!options.BaseName.empty()) {
+					ofs << options.BaseName << "_";
 				}
-				ofs << tiles[i].Name;
-			}
-			ofs << endl << "};" << endl;
-			if (options.Palette.TransparentIndex >= 0 && !options.InterlaceMasks) {
-				ofs << "u8* const " << options.BaseName << "_masks_tilemap[" << numTiles << "] = { " << endl << "\t";
+				ofs << "tilemap[" << numTiles << "] = { " << endl << "\t";
 				for (unsigned int i = 0; i<numTiles; ++i) {
 					if (i > 0) {
 						ofs << ", ";
 					}
-					ofs << tiles[i].Name << "_mask";
+					ofs << tiles[i].Name;
 				}
 				ofs << endl << "};" << endl;
+				if (options.Palette.TransparentIndex >= 0 && !options.InterlaceMasks) {
+					ofs << "u8* const " << options.BaseName << "_masks_tilemap[" << numTiles << "] = { " << endl << "\t";
+					for (unsigned int i = 0; i<numTiles; ++i) {
+						if (i > 0) {
+							ofs << ", ";
+						}
+						ofs << tiles[i].Name << "_mask";
+					}
+					ofs << endl << "};" << endl;
+				}
 			}
-
+			
 			for (Tile t : tiles) {
 				int numBytes = t.Data.size();
 				if (numBytes > 0) {

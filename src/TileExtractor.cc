@@ -1,11 +1,8 @@
 #include "TileExtractor.hpp"
 
 vector<Tile> TileExtractor::GetTiles(const string &fileName) {
-	this->BaseName = this->Options.BaseName;
-	if (this->BaseName.empty()) {
-		this->BaseName = FileUtils::RemoveExtension(fileName);
-	}
-	this->BaseName = FileUtils::Sanitize(this->BaseName);
+	string currentFileName = FileUtils::Sanitize(FileUtils::RemoveExtension(fileName));
+	string baseName = FileUtils::Sanitize(this->Options.BaseName);
 
 	vector<Tile> result;
 
@@ -41,14 +38,16 @@ vector<Tile> TileExtractor::GetTiles(const string &fileName) {
 				theTile.Palette = this->Options.Palette;
 				theTile.TileWidthInBytes = theTile.TileWidth / this->ModeIncrement;
 
-				if (realTileHeight == imageHeight && realTileWidth == imageWidth) {
-					theTile.Name = this->BaseName;
+				stringstream nameStream;
+				if(!baseName.empty()) {
+					nameStream << baseName << "_";
 				}
-				else {
-					stringstream nameStream;
-					nameStream << this->BaseName << "_" << tileIdx;
-					theTile.Name = nameStream.str();
+				nameStream << currentFileName;
+				if (realTileHeight != imageHeight || realTileWidth != imageWidth) {
+					nameStream << "_" << tileIdx;
 				}
+				theTile.Name = nameStream.str();
+				
 				++tileIdx;
 				result.push_back(theTile);
 			}

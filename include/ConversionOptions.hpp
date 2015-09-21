@@ -17,12 +17,13 @@ public:
 		ScanlineOrder{ 0,1,2,3,4,5,6,7 },
 		ZigZag(false) { };
 
-	enum OutputFormat { ASSEMBLER, BINARY, PURE_C };
+	enum OutputFormat { ASSEMBLER, ASSEMBLER_ASXXXX, BINARY, PURE_C };
 	enum OutputPalette { NONE, FIRMWARE, HARDWARE };
 
 	inline static const char* ToString(OutputFormat f) {
 		switch (f) {
 		case ASSEMBLER: return "asm";
+		case ASSEMBLER_ASXXXX: return "s";
 		case BINARY: return "bin";
 		case PURE_C: return "c";
 		default: return "unknown";
@@ -52,6 +53,8 @@ public:
 	bool InterlaceMasks;
 	OutputPalette PaletteFormat;
 
+	bool CreateTileset;
+
 	OutputFormat ParseFormat(const string &formatString) {
 		string fmtLower(formatString);
 		transform(fmtLower.begin(), fmtLower.end(), fmtLower.begin(), ::tolower);
@@ -59,6 +62,7 @@ public:
 		//cout << fmtLower << endl;
 
 		if (fmtLower == "asm") this->Format = ASSEMBLER;
+		else if(fmtLower == "s") this->Format = ASSEMBLER_ASXXXX;
 		else if (fmtLower == "bin") this->Format = BINARY;
 		else if (fmtLower == "c") this->Format = PURE_C;
 
