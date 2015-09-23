@@ -261,6 +261,8 @@ public:
 		ss << options.OutputFileName << ".asm";
 		string fileName = ss.str();
 
+		string baseOutputFileName = FileUtils::RemoveExtension(options.OutputFileName);
+
 		ofstream os(fileName);
 		os << "; Data created with Img2CPC - (c) Retroworks - 2007-2015" << endl;
 		
@@ -276,13 +278,13 @@ public:
 				int numBytes = t.Data.size();
 				if (numBytes > 0) {
 					stringstream ss;
-					ss << t.Name << ".bin";
+					ss << options.OutputFileName << t.Name << ".bin";
 					string binFileName = ss.str();
 					ofstream ofs(binFileName, ios::binary);
 
 					os << "; Tile " << t.Name << " - " << t.TileWidth << "x" << t.TileHeight << " pixels, " << t.TileWidthInBytes << "x" << t.TileHeight << " bytes." << endl;
 					os << t.Name << ":" << endl;
-					os << "INCBIN \"" << fileName << "\"" << endl;
+					os << "INCBIN \"" << FileUtils::GetFileName(binFileName) << "\"" << endl;
 
 					if (options.InterlaceMasks) {
 						for (int i = 0; i < numBytes; ++i) {
@@ -296,12 +298,12 @@ public:
 
 						if (options.Palette.TransparentIndex >= 0) {
 							stringstream ssMask;
-							ssMask << t.Name << "_mask.bin";
+							ssMask << options.OutputFileName << t.Name << "_mask.bin";
 							string maskFileName = ssMask.str();
 							ofstream ofsMask(maskFileName, ios::binary);
 
 							os << t.Name << "_mask:" << endl;
-							os << "INCBIN \"" << maskFileName << "\"" << endl;
+							os << "INCBIN \"" << FileUtils::GetFileName(maskFileName) << "\"" << endl;
 
 							for (int i = 0; i < numBytes; ++i) {
 								ofsMask << t.MaskData[i];
