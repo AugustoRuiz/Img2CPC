@@ -37,11 +37,17 @@ Specifies the CPC Mode to generate data for. Valid values are 0 (default), 1 or 
 `-map, --tilemap`
 Generate tile map
 
+`-nt, --noTileset`
+Don't create tileset. Use this if you are creating sprites and do not need a table with all the tile pointers.
+
 `-o, --outputFileName ARG`
 Output file name. Default value is gfx. img2cpc will append the proper extension based on format.
 
 `-of, --outputFormat ARG`
 Output format. If not set, data will be generated in assembly format.
+
+`--oneFile`
+Generate one output file per processed file. Files will be named using the base name (if specified) and the source file name.
 
 `-opfw`
 Output palette (firmware values)
