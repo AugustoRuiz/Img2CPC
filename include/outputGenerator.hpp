@@ -79,7 +79,7 @@ public:
 	void DumpTileMap(vector<Tile> tiles, ConversionOptions &options, ofstream &ofs) {
 		unsigned int numTiles = tiles.size();
 		if (numTiles > 0) {
-			ofs << options.BaseName << "tilemap:" << endl << "DEFW ";
+			ofs << options.BaseName << "tileset:" << endl << "DEFW ";
 			for (unsigned int i = 0; i < numTiles; ++i) {
 				if (i > 0) {
 					ofs << ", ";
@@ -108,7 +108,7 @@ public:
 	void DumpTileMapASXXXX(vector<Tile> tiles, ConversionOptions &options, ofstream &ofs) {
 		unsigned int numTiles = tiles.size();
 		if (numTiles > 0) {
-			ofs << "_" << options.BaseName << "tilemap::" << endl << ".dw ";
+			ofs << "_" << options.BaseName << "tileset::" << endl << ".dw ";
 			for (unsigned int i = 0; i < numTiles; ++i) {
 				if (i > 0) {
 					ofs << ", ";
@@ -120,7 +120,7 @@ public:
 				if(!options.BaseName.empty()) {
 					ofs << "_" << options.BaseName;	
 				}
-				ofs << "_masks_tilemap::" << endl << ".dw ";
+				ofs << "_masks_tileset::" << endl << ".dw ";
 				for (unsigned int i = 0; i < numTiles; ++i) {
 					if (i > 0) {
 						ofs << ", ";
