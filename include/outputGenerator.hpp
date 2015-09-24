@@ -92,7 +92,7 @@ public:
 				if(!options.BaseName.empty()) {
 					ofs << options.BaseName << "_";
 				}
-				ofs << "masks_tilemap:" << endl << "DEFW ";
+				ofs << "masks_tileset:" << endl << "DEFW ";
 				
 				for (unsigned int i = 0; i < numTiles; ++i) {
 					if (i > 0) {
