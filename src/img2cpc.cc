@@ -35,6 +35,8 @@ int initializeParser(ezOptionParser &parser) {
 	parser.add("", 0, 0, 0, "Generates PNG images to check tile output.", "-g", "--generatePNG");
 	parser.add("", 0, 0, 0, "Generate one output file per processed file. Files will be named using the base name (if specified) and the source file name .", "--oneFile");
 
+	parser.add("", 0, 1, ',', "Additional includes to add to header file when generating C data files.", "--includes");
+
 	parser.add("", 0, 0, 0, "Help. Show usage.", "--help");
 
 	return 0;
@@ -211,6 +213,14 @@ int extractConversionOptions(ezOptionParser &options, ConversionOptions &convOpt
 
 		if (options.isSet("-z")) {
 			convOptions.ZigZag = true;
+		}
+
+		if(options.isSet("--includes")) {
+			if(convOptions.Format == ConversionOptions::PURE_C) {
+				options.get("--includes")->getStrings(convOptions.AdditionalIncludes);
+			} else {
+				cout << "Warning: Additional includes for output format different than C files. Ignored." << endl;
+			}
 		}
 
 		convOptions.InterlaceMasks = convOptions.Palette.TransparentIndex >= 0 && options.isSet("-im");

@@ -56,6 +56,8 @@ public:
 	bool CreateTileset;
 	bool OneFilePerSourceFile;
 
+	vector<string> AdditionalIncludes;
+
 	OutputFormat ParseFormat(const string &formatString) {
 		string fmtLower(formatString);
 		transform(fmtLower.begin(), fmtLower.end(), fmtLower.begin(), ::tolower);

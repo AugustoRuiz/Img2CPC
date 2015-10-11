@@ -327,6 +327,11 @@ public:
 			string fileName = ss.str();
 
 			ofstream ofs(fileName);
+
+			for(string i : options.AdditionalIncludes) {
+				ofs << "#include " << i << endl;
+			}
+
 			ofs << "// Data created with Img2CPC - (c) Retroworks - 2007-2015" << endl;
 
 			string sanitizedFileName = FileUtils::Sanitize(fileName);
@@ -385,6 +390,7 @@ public:
 		string fileName = ss.str();
 
 		ofstream ofs(fileName);
+		ofs << "#include \"" << FileUtils::GetFileName(options.OutputFileName) << ".h\"" << endl;
 		ofs << "// Data created with Img2CPC - (c) Retroworks - 2007-2015" << endl;
 
 		vector<int> palette = GetPaletteValues(options);
