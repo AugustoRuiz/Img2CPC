@@ -328,10 +328,6 @@ public:
 
 			ofstream ofs(fileName);
 
-			for(string i : options.AdditionalIncludes) {
-				ofs << "#include " << i << endl;
-			}
-
 			ofs << "// Data created with Img2CPC - (c) Retroworks - 2007-2015" << endl;
 
 			string sanitizedFileName = FileUtils::Sanitize(fileName);
@@ -339,6 +335,10 @@ public:
 
 			ofs << "#ifndef _" << sanitizedFileName << "_" << endl;
 			ofs << "#define _" << sanitizedFileName << "_" << endl << endl;
+
+			for(string i : options.AdditionalIncludes) {
+				ofs << "#include " << i << endl;
+			}
 
 			vector<int> palette = GetPaletteValues(options);
 			unsigned int numColors = palette.size();
