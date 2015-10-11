@@ -79,7 +79,7 @@ public:
 	void DumpTileMap(vector<Tile> tiles, ConversionOptions &options, ofstream &ofs) {
 		unsigned int numTiles = tiles.size();
 		if (numTiles > 0) {
-			ofs << options.BaseName << "tilemap:" << endl << "DEFW ";
+			ofs << options.BaseName << "tileset:" << endl << "DEFW ";
 			for (unsigned int i = 0; i < numTiles; ++i) {
 				if (i > 0) {
 					ofs << ", ";
@@ -92,7 +92,7 @@ public:
 				if(!options.BaseName.empty()) {
 					ofs << options.BaseName << "_";
 				}
-				ofs << "masks_tilemap:" << endl << "DEFW ";
+				ofs << "masks_tileset:" << endl << "DEFW ";
 				
 				for (unsigned int i = 0; i < numTiles; ++i) {
 					if (i > 0) {
@@ -108,7 +108,7 @@ public:
 	void DumpTileMapASXXXX(vector<Tile> tiles, ConversionOptions &options, ofstream &ofs) {
 		unsigned int numTiles = tiles.size();
 		if (numTiles > 0) {
-			ofs << "_" << options.BaseName << "tilemap::" << endl << ".dw ";
+			ofs << "_" << options.BaseName << "tileset::" << endl << ".dw ";
 			for (unsigned int i = 0; i < numTiles; ++i) {
 				if (i > 0) {
 					ofs << ", ";
@@ -120,7 +120,7 @@ public:
 				if(!options.BaseName.empty()) {
 					ofs << "_" << options.BaseName;	
 				}
-				ofs << "_masks_tilemap::" << endl << ".dw ";
+				ofs << "_masks_tileset::" << endl << ".dw ";
 				for (unsigned int i = 0; i < numTiles; ++i) {
 					if (i > 0) {
 						ofs << ", ";
@@ -355,13 +355,13 @@ public:
 				if(!options.BaseName.empty()) {
 					ofs << options.BaseName << "_";
 				}
-				ofs << "tilemap[" << numTiles << "];" << endl << endl;
+				ofs << "tileset[" << numTiles << "];" << endl << endl;
 				if (!options.InterlaceMasks && options.Palette.TransparentIndex >= 0) {
 					ofs << "extern u8* const "; 
 					if(!options.BaseName.empty()) {
 						ofs << options.BaseName << "_";						
 					}
-					ofs << "masks_tilemap[" << numTiles << "];" << endl << endl;
+					ofs << "masks_tileset[" << numTiles << "];" << endl << endl;
 				}
 			}
 
@@ -420,7 +420,7 @@ public:
 				if(!options.BaseName.empty()) {
 					ofs << options.BaseName << "_";
 				}
-				ofs << "tilemap[" << numTiles << "] = { " << endl << "\t";
+				ofs << "tileset[" << numTiles << "] = { " << endl << "\t";
 				for (unsigned int i = 0; i<numTiles; ++i) {
 					if (i > 0) {
 						ofs << ", ";
@@ -429,7 +429,7 @@ public:
 				}
 				ofs << endl << "};" << endl;
 				if (options.Palette.TransparentIndex >= 0 && !options.InterlaceMasks) {
-					ofs << "u8* const " << options.BaseName << "_masks_tilemap[" << numTiles << "] = { " << endl << "\t";
+					ofs << "u8* const " << options.BaseName << "_masks_tileset[" << numTiles << "] = { " << endl << "\t";
 					for (unsigned int i = 0; i<numTiles; ++i) {
 						if (i > 0) {
 							ofs << ", ";
