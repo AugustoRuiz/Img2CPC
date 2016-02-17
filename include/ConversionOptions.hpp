@@ -15,7 +15,8 @@ public:
 		Format(ASSEMBLER),
 		Mode(0),
 		ScanlineOrder{ 0,1,2,3,4,5,6,7 },
-		ZigZag(false) { };
+		ZigZag(false),
+		CreateFlipLut(false) { };
 
 	enum OutputFormat { ASSEMBLER, ASSEMBLER_ASXXXX, BINARY, PURE_C };
 	enum OutputPalette { NONE, FIRMWARE, HARDWARE };
@@ -54,6 +55,8 @@ public:
 	OutputPalette PaletteFormat;
 
 	bool CreateTileset;
+	bool CreateFlipLut;
+	bool NoMaskData;
 	bool OneFilePerSourceFile;
 
 	vector<string> AdditionalIncludes;

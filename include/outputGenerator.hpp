@@ -34,6 +34,92 @@ public:
 		return ss.str();
 	};
 
+	void DumpTableASM(unsigned char* table, int tableSize, string name) {
+		stringstream ss;
+		ss << name << ".asm";
+		string fileName = ss.str();
+
+		ofstream ofs(fileName);
+		ofs << name << ":";
+		for(int i=0;i<tableSize;++i) {
+			if(i % 0x10 == 0) {
+				ofs << endl << "DEFB ";
+			} else {
+				if (i > 0) {
+					ofs << ", ";
+				}				
+			}
+			ofs << "#" << toHexString(table[i]);
+		}
+		ofs << endl;
+		ofs.close();
+	}
+
+	void DumpTableASXXXX(unsigned char* table, int tableSize, string name) {
+		stringstream ss;
+		ss << name << ".s";
+		string fileName = ss.str();
+
+		ofstream ofs(fileName);
+		ofs << name << "::";
+		for(int i=0;i<tableSize;++i) {
+			if(i % 0x10 == 0) {
+				ofs << endl << ".db ";
+			} else {
+				if (i > 0) {
+					ofs << ", ";
+				}				
+			}
+			ofs << "#0x" << toHexString(table[i]);
+		}
+		ofs << endl;
+		ofs.close();
+	}
+
+	void DumpTableC(unsigned char* table, int tableSize, string name) {
+		stringstream css, hss;
+		css << name << ".c";
+		hss << name << ".h";
+		string cFileName = css.str();
+		string hFileName = hss.str();
+		string sanitizedFileName = FileUtils::Sanitize(hFileName);
+
+		ofstream cofs(cFileName); 
+		ofstream hofs(hFileName);
+
+		hofs << "#ifndef _" << sanitizedFileName << "_" << endl;
+		hofs << "#define _" << sanitizedFileName << "_" << endl << endl;
+		hofs << "extern u8 const " << name << "[" << tableSize << "];" << endl << endl;
+		hofs << "#endif" << endl;
+		hofs.close();
+
+		cofs << "#include \"" << hFileName << "\"" << endl;
+		cofs << "const u8 " << name << "[" << tableSize << "] = { ";
+		for(int i=0;i<tableSize;++i) {
+			if (i > 0) { 
+				cofs << ", ";
+			}
+			if(i % 0x10 == 0) {
+				cofs << endl << "\t";
+			}
+			cofs << "0x" << toHexString(table[i]);
+		}
+		cofs << endl << "};" << endl << endl;
+		cofs.close();
+	}
+
+	void DumpTableBIN(unsigned char* table, int tableSize, string name) {
+		stringstream ss;
+		ss << name << ".bin";
+		string binFileName = ss.str();
+
+		ofstream ofs(binFileName, ios::binary);
+		for(int i=0;i<tableSize;++i) {
+			ofs << table[i];
+		}
+		ofs.close();
+	}
+
 	void DumpPaletteASM(ConversionOptions &options, ofstream &ofs) {
 		vector<int> palette = GetPaletteValues(options);
 		unsigned int numColors = palette.size();
@@ -70,7 +156,7 @@ public:
 				if (i > 0) {
 					ofs << ", ";
 				}
-				ofs << "#" << toHexString(palette[i]);
+				ofs << "#0x" << toHexString(palette[i]);
 			}
 			ofs << endl << endl;
 		}
@@ -87,7 +173,7 @@ public:
 				ofs << tiles[i].Name;
 			}
 			ofs << endl << endl;
-			if (options.Palette.TransparentIndex >= 0 && !options.InterlaceMasks) {
+			if (options.Palette.TransparentIndex >= 0 && !(options.NoMaskData || options.InterlaceMasks)) {
 				
 				if(!options.BaseName.empty()) {
 					ofs << options.BaseName << "_";
@@ -116,7 +202,7 @@ public:
 				ofs << tiles[i].Name;
 			}
 			ofs << endl << endl;
-			if (options.Palette.TransparentIndex >= 0 && !options.InterlaceMasks) {
+			if (options.Palette.TransparentIndex >= 0 && ! (options.NoMaskData || options.InterlaceMasks)) {
 				if(!options.BaseName.empty()) {
 					ofs << "_" << options.BaseName;	
 				}
@@ -174,7 +260,7 @@ public:
 						}
 						ofs << endl;
 					}
-					if (options.Palette.TransparentIndex >= 0) {
+					if (options.Palette.TransparentIndex >= 0 && (!options.NoMaskData)) {
 						currentByte = 0;
 						ofs << t.Name << "_MASK:" << endl;
 						for (int y = 0; y<t.TileHeight; ++y) {
@@ -236,7 +322,7 @@ public:
 						}
 						ofs << endl;
 					}
-					if (options.Palette.TransparentIndex >= 0) {
+					if (options.Palette.TransparentIndex >= 0 && (!options.NoMaskData)) {
 						currentByte = 0;
 						ofs << t.Name << "_MASK::" << endl;
 						for (int y = 0; y<t.TileHeight; ++y) {
@@ -296,7 +382,7 @@ public:
 							ofs << t.Data[i];
 						}
 
-						if (options.Palette.TransparentIndex >= 0) {
+						if (options.Palette.TransparentIndex >= 0 && !(options.NoMaskData)) {
 							stringstream ssMask;
 							ssMask << options.OutputFileName << t.Name << "_mask.bin";
 							string maskFileName = ssMask.str();
@@ -356,10 +442,10 @@ public:
 					ofs << options.BaseName << "_";
 				}
 				ofs << "tileset[" << numTiles << "];" << endl << endl;
-				if (!options.InterlaceMasks && options.Palette.TransparentIndex >= 0) {
+				if (!(options.InterlaceMasks || options.NoMaskData) && options.Palette.TransparentIndex >= 0) {
 					ofs << "extern u8* const "; 
 					if(!options.BaseName.empty()) {
-						ofs << options.BaseName << "_";						
+						ofs << options.BaseName << "_";		
 					}
 					ofs << "masks_tileset[" << numTiles << "];" << endl << endl;
 				}
@@ -373,7 +459,7 @@ public:
 					}
 					else {
 						ofs << "extern const u8 " << t.Name << "[" << numBytes << "];" << endl;
-						if (options.Palette.TransparentIndex >= 0) {
+						if (options.Palette.TransparentIndex >= 0 && !options.NoMaskData) {
 							ofs << "extern const u8 " << t.Name << "_mask[" << numBytes << "];" << endl;
 						}
 					}
@@ -428,7 +514,7 @@ public:
 					ofs << tiles[i].Name;
 				}
 				ofs << endl << "};" << endl;
-				if (options.Palette.TransparentIndex >= 0 && !options.InterlaceMasks) {
+				if (options.Palette.TransparentIndex >= 0 && !(options.InterlaceMasks || options.NoMaskData)) {
 					ofs << "u8* const " << options.BaseName << "_masks_tileset[" << numTiles << "] = { " << endl << "\t";
 					for (unsigned int i = 0; i<numTiles; ++i) {
 						if (i > 0) {
@@ -478,7 +564,7 @@ public:
 						}
 						ofs << "};" << endl;
 
-						if (options.Palette.TransparentIndex >= 0) {
+						if (options.Palette.TransparentIndex >= 0 && !options.NoMaskData) {
 							currentByte = 0;
 							ofs << "const u8 " << t.Name << "_mask[" << numBytes << "] = {" << endl;
 							for (int y = 0; y<t.TileHeight; ++y) {
