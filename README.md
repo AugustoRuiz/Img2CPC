@@ -58,6 +58,9 @@ Output palette (firmware values)
 `-ophw`
 Output palette (hardware values)
 
+`-os, --outputSize`
+Output tile size as constants. `#define`s will be created in C, `EQU`s in assembler.
+
 `-p, --palette ARG`
 Specifies input palette file.
 
