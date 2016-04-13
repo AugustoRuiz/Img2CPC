@@ -41,9 +41,13 @@ vector<Tile> TileExtractor::GetTiles(const string &fileName) {
 
 				stringstream nameStream;
 				if(!baseName.empty()) {
-					nameStream << baseName << "_";
+					nameStream << baseName;;
+					if(!this->Options.AbsoluteBaseName) {
+						nameStream  << "_" << currentFileName;					
+					}
+				} else {
+					nameStream << currentFileName;
 				}
-				nameStream << currentFileName;
 				if (realTileHeight != imageHeight || realTileWidth != imageWidth) {
 					nameStream << "_" << tileIdx;
 				}

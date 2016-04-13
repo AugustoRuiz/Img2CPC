@@ -10,8 +10,10 @@ int initializeParser(ezOptionParser &parser) {
 	parser.add("", 0, 1, 0, "Tile width. If not set, the image width is used.", "-w", "--tileWidth");
 	parser.add("", 0, 1, 0, "Tile height. If not set, the image height is used.", "-h", "--tileHeight");
 	parser.add("", 0, 1, 0, "Tile base name. If not set, the filename will be used.", "-bn", "--baseName");
+	parser.add("", 0, 0, 0, "Absolute base name. Use the tile base name as the variable identifier, no composition.", "-abn", "--absoluteBaseName");
 
 	parser.add("asm", 0, 1, 0, "Output format. If not set, data will be generated in assembly format.", "-of", "--outputFormat");
+	parser.add("", 0, 0, 0, "Output tile size as constants.", "-osz", "--outputSize");
 	parser.add("", 0, 0, 0, "Create a flipped values look-up table for the current palette and mode.", "-f");
 
 	parser.add("0", 0, 1, 0, "Specifies the CPC Mode to generate data for. Valid values are 0 (default), 1 or 2.", "-m", "--mode");
@@ -186,6 +188,13 @@ int extractConversionOptions(ezOptionParser &options, ConversionOptions &convOpt
 		if (options.isSet("-bn")) {
 			options.get("-bn")->getString(convOptions.BaseName);
 		}
+		convOptions.AbsoluteBaseName = options.isSet("-abn");
+	
+		if(convOptions.AbsoluteBaseName && options.lastArgs.size() > 1) {
+			cout << "ERROR: Cannot specify more than one file with the --absoluteBaseName or -abn switch." << endl;
+			return -1;
+		}
+		convOptions.OutputSize = options.isSet("-osz");
 
 		string outputFmt;
 		options.get("-of")->getString(outputFmt);
@@ -412,7 +421,7 @@ int main(int argc, const char** argv)
 		cout << "Couldn't parse conversion options. Use img2cpc --help for more information." << endl;
 		return optionsResult;
 	}
-	//convOptions.Dump();
+		//convOptions.Dump();
 
 	vector<string *> &lastArgs = options.lastArgs;
 	vector<Tile> tiles;

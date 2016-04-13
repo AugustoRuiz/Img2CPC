@@ -11,7 +11,10 @@ img2cpc - (c) 2007-2015 Retroworks.
 Help. Show usage.
 
 `-bn, --baseName ARG` 
-Tile base name. If not set, the filename will be used.
+Tile base name. If not set, the filename will be used. The base name will be prepended to the filename, unless the `absoluteBaseName` switch is specified.
+
+`-abn, --absoluteBaseName` 
+Absolute tile base name. This switch should be used in conjuction with the `baseName` switch. If specified, the base name specified will be the identifier to use when generating data, and the file name will be ignored.
 
 `-f`
 Create a flipped values look-up table for the current palette and mode.

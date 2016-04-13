@@ -8,6 +8,9 @@
 
 using namespace std;
 
+#define PALETTE_JSON_KEY "palette"
+
+
 class ConversionOptions {
 public:
 	ConversionOptions() : TileWidth(-1),
@@ -45,6 +48,7 @@ public:
 	int TileWidth;
 	int TileHeight;
 	string BaseName;
+	bool AbsoluteBaseName;
 
 	OutputFormat Format;
 	int Mode;
@@ -52,6 +56,7 @@ public:
 	vector<int> ScanlineOrder;
 	bool ZigZag;
 	bool InterlaceMasks;
+	bool OutputSize;
 	OutputPalette PaletteFormat;
 
 	bool CreateTileset;
@@ -77,9 +82,10 @@ public:
 
 	Json::Value ToJson() {
 		Json::Value root;
-		root["palette"] = this->Palette.ToJSON();
+		root[PALETTE_JSON_KEY] = this->Palette.ToJSON();
 		root["tileWidth"] = this->TileWidth;
 		root["tileHeight"] = this->TileHeight;
+		root["absoluteBaseName"] = this->AbsoluteBaseName;
 		root["baseName"] = this->BaseName;
 		root["format"] = ToString(this->Format);
 		root["mode"] = this->Mode;
@@ -89,14 +95,16 @@ public:
 			root["scanlineOrder"].append(s);
 		}
 		root["zigZag"] = this->ZigZag;
+		root["outputSize"] = this->OutputSize;
 		return root;
 	};
 
 	void FromJson(Json::Value root) {
-		this->Palette.FromJSON(root["palette"]);
+		this->Palette.FromJSON(root[PALETTE_JSON_KEY]);
 		this->TileWidth = root["tileWidth"].asInt();
 		this->TileHeight = root["tileHeight"].asInt();
 		this->BaseName = root["baseName"].asString();
+		this->AbsoluteBaseName = root["absoluteBaseName"].asBool();
 		this->Format = ParseFormat(root["format"].asString());
 		this->Mode = root["mode"].asInt();
 		this->OutputFileName = root["outputFileName"].asString();
@@ -106,6 +114,7 @@ public:
 			this->ScanlineOrder.push_back(scanlines[i].asInt());
 		}
 		this->ZigZag = root["zigzag"].asBool();
+		this->OutputSize = root["outputSize"].asBool();
 	};
 
 	void Dump() {

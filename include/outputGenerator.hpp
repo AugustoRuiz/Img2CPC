@@ -118,6 +118,14 @@ public:
 			ofs << table[i];
 		}
 		ofs.close();
+
+		stringstream asmSs;
+		asmSs << name << ".asm";
+		string asmFileName = asmSs.str();
+
+		ofstream asmOfs(asmFileName);
+		asmOfs << name << ":" << endl << "INCBIN \"" << binFileName << "\"" << endl;
+		asmOfs.close();
 	}
 
 	void DumpPaletteASM(ConversionOptions &options, ofstream &ofs) {
@@ -236,6 +244,14 @@ public:
 			int numBytes = t.Data.size();
 			if (numBytes > 0) {
 				ofs << "; Tile " << t.Name << " - " << t.TileWidth << "x" << t.TileHeight << " pixels, " << t.TileWidthInBytes << "x" << t.TileHeight << " bytes." << endl;
+
+				if(options.OutputSize) {
+					string defineBase = t.Name;
+					transform(defineBase.begin(), defineBase.end(), defineBase.begin(), ::toupper);
+					ofs << defineBase << "_W EQU " << t.TileWidthInBytes << endl;
+					ofs << defineBase << "_H EQU " << t.TileHeight << endl;
+				}
+
 				ofs << t.Name << ":" << endl;
 				if (options.InterlaceMasks) {
 					int currentByte = 0;
@@ -298,6 +314,14 @@ public:
 			int numBytes = t.Data.size();
 			if (numBytes > 0) {
 				ofs << "; Tile " << t.Name << " - " << t.TileWidth << "x" << t.TileHeight << " pixels, " << t.TileWidthInBytes << "x" << t.TileHeight << " bytes." << endl;
+
+				if(options.OutputSize) {
+					string defineBase = t.Name;
+					transform(defineBase.begin(), defineBase.end(), defineBase.begin(), ::toupper);
+					ofs << defineBase << "_W = #0x" << toHexString(t.TileWidthInBytes) << endl;
+					ofs << defineBase << "_H = #0x" << toHexString(t.TileHeight) << endl;						
+				}
+
 				ofs << t.Name << "::" << endl;
 				if (options.InterlaceMasks) {
 					int currentByte = 0;
@@ -369,6 +393,14 @@ public:
 					ofstream ofs(binFileName, ios::binary);
 
 					os << "; Tile " << t.Name << " - " << t.TileWidth << "x" << t.TileHeight << " pixels, " << t.TileWidthInBytes << "x" << t.TileHeight << " bytes." << endl;
+
+					if(options.OutputSize) {
+						string defineBase = t.Name;
+						transform(defineBase.begin(), defineBase.end(), defineBase.begin(), ::toupper);
+						os << defineBase << "_W EQU " << t.TileWidthInBytes << endl;
+						os << defineBase << "_H EQU " << t.TileHeight << endl;						
+					}
+
 					os << t.Name << ":" << endl;
 					os << "INCBIN \"" << FileUtils::GetFileName(binFileName) << "\"" << endl;
 
@@ -402,7 +434,6 @@ public:
 			}
 		}
 		os.close();
-		
 	};
 
 	void GenerateH(vector<Tile> tiles, ConversionOptions &options) {
@@ -454,13 +485,21 @@ public:
 			for (Tile t : tiles) {
 				int numBytes = t.Data.size();
 				if (numBytes > 0) {
+
+					if(options.OutputSize) {
+						string defineBase = t.Name;
+						transform(defineBase.begin(), defineBase.end(), defineBase.begin(), ::toupper);
+						ofs << "#define " << defineBase << "_W " << t.TileWidthInBytes << endl;
+						ofs << "#define " << defineBase << "_H " << t.TileHeight << endl;						
+					}
+
 					if (options.InterlaceMasks) {
-						ofs << "extern const u8 " << t.Name << "[" << numBytes * 2 << "];" << endl;
+						ofs << "extern const u8 " << t.Name << "[2 * " << t.TileWidthInBytes << " * " << t.TileHeight << "];" << endl;
 					}
 					else {
-						ofs << "extern const u8 " << t.Name << "[" << numBytes << "];" << endl;
+						ofs << "extern const u8 " << t.Name << "[" << t.TileWidthInBytes << " * " << t.TileHeight << "];" << endl;
 						if (options.Palette.TransparentIndex >= 0 && !options.NoMaskData) {
-							ofs << "extern const u8 " << t.Name << "_mask[" << numBytes << "];" << endl;
+							ofs << "extern const u8 " << t.Name << "_mask[" << t.TileWidthInBytes << " * " << t.TileHeight << "];" << endl;
 						}
 					}
 				}
@@ -530,8 +569,9 @@ public:
 				int numBytes = t.Data.size();
 				if (numBytes > 0) {
 					ofs << "// Tile " << t.Name << ": " << t.TileWidth << "x" << t.TileHeight << " pixels, " << t.TileWidthInBytes << "x" << t.TileHeight << " bytes." << endl;
+
 					if (options.InterlaceMasks) {
-						ofs << "const u8 " << t.Name << "[" << numBytes * 2 << "] = {" << endl;
+						ofs << "const u8 " << t.Name << "[2 * " << t.TileWidthInBytes << " * " << t.TileHeight << "] = {" << endl;
 						int currentByte = 0;
 						for (int y = 0; y<t.TileHeight; ++y) {
 							ofs << "\t0x" << toHexString(t.MaskData[currentByte]) << ", 0x" << toHexString(t.Data[currentByte]);
@@ -549,7 +589,7 @@ public:
 					}
 					else {
 						int currentByte = 0;
-						ofs << "const u8 " << t.Name << "[" << numBytes << "] = {" << endl;
+						ofs << "const u8 " << t.Name << "[" << t.TileWidthInBytes << " * " << t.TileHeight << "] = {" << endl;
 						for (int y = 0; y<t.TileHeight; ++y) {
 							ofs << "\t0x" << toHexString(t.Data[currentByte]);
 							currentByte++;
@@ -566,7 +606,7 @@ public:
 
 						if (options.Palette.TransparentIndex >= 0 && !options.NoMaskData) {
 							currentByte = 0;
-							ofs << "const u8 " << t.Name << "_mask[" << numBytes << "] = {" << endl;
+							ofs << "const u8 " << t.Name << "_mask[" << t.TileWidthInBytes << " * " << t.TileHeight << "] = {" << endl;
 							for (int y = 0; y<t.TileHeight; ++y) {
 								ofs << "\t0x" << toHexString(t.MaskData[currentByte]);
 								currentByte++;
