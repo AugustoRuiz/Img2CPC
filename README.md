@@ -28,6 +28,9 @@ Generates PNG images, one per tile and one per mask (if transparency is set).
 `-h, --tileHeight ARG`
 Tile height. If not set, the image height is used.
 
+`-hf, --halfflip`
+HalfFlip. Generate data with odd lines preflipped.
+
 `-hwp, --hardwarePalette ARG1[,ARGn]`
 Palette specified in hardware values.
 
@@ -74,6 +77,9 @@ Scanline order. Default value is `0,1,2,3,4,5,6,7`
 
 `-t, --transparentColor ARG`
 Specifies transparent color (as index in palette).
+
+`-ta, --transparentAlpha`
+Uses transparent pixels from image (alpha value=0). This option should be used with mask always.
 
 `-w, --tileWidth ARG`
 Tile width. If not set, the image width is used.
