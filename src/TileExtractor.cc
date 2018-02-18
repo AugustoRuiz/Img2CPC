@@ -88,11 +88,17 @@ Tile* TileExtractor::getTile(FIBITMAP* bmp) {
 	return result;
 }
 
+#define START_OF_LINE 512
+#define OPAQUE_PIXELS 0x00
+#define END_OF_LINE 0xFF
+#define END_OF_SPRITE 0xFE
+#define TRANSPARENT_PIXELS_MASK 0xFF
+
 void TileExtractor::fillTileRLE(Tile* tile, FIBITMAP* bmp) {
 	int scanlineCount = this->Options.ScanlineOrder.size();
 	int scanlineIdx = 0;
 	int counterIdx = -1;
-	int maskMode = 512;
+	int maskMode = START_OF_LINE;
 
 //	cout << hex << setw(2) << setfill('0') << endl;
 	for (unsigned int y = 0; y < this->TileHeight; ++y) {
@@ -101,14 +107,12 @@ void TileExtractor::fillTileRLE(Tile* tile, FIBITMAP* bmp) {
 		bool flip = this->Options.ZigZag && oddY;
 		bool halfFlip = this->Options.HalfFlip && oddY;
 
-		if(maskMode == 0) {
-			maskMode = 512;	
-		}
 		unsigned int rowIndex = 0;
 		do {
 			rowIndex = (charIdx * scanlineCount) + this->Options.ScanlineOrder[scanlineIdx];
 			scanlineIdx = (scanlineIdx + 1) % scanlineCount;
 		} while (rowIndex >= this->TileHeight);
+		maskMode = START_OF_LINE;
 
 		// Current line to process is rowIndex.
 		for (unsigned int x = 0; x < this->TileWidth; x += this->ModeIncrement) {
@@ -123,31 +127,46 @@ void TileExtractor::fillTileRLE(Tile* tile, FIBITMAP* bmp) {
 				tile->MaskValues.push_back(maskIdx);
 			}
 
-			if(byteValues.MaskByte == 0xFF) {
+			if(byteValues.MaskByte == TRANSPARENT_PIXELS_MASK) {
 				// Transparent.
-				if(maskMode != byteValues.MaskByte) {
-					maskMode = byteValues.MaskByte;
+				if(maskMode != TRANSPARENT_PIXELS_MASK) {
+					maskMode = TRANSPARENT_PIXELS_MASK;
 					counterIdx = tile->Data.size();
-					tile->Data.push_back(0x80);
+					// Number of transparent bytes
+					tile->Data.push_back(0x0);
 				}
 				tile->Data[counterIdx]++;
 			} else {
-				if(maskMode != 0) {
-					maskMode = 0;
+				if(maskMode == START_OF_LINE) {
+					// 0 transparent bytes.
+					tile->Data.push_back(0);
+				}
+				if(maskMode != OPAQUE_PIXELS) {
+					maskMode = OPAQUE_PIXELS;
 					counterIdx = tile->Data.size();
+					// number of opaque bytes.
 					tile->Data.push_back(0);
 				}
 				tile->Data.push_back(byteValues.ColorByte);
 				tile->Data[counterIdx]++;
 			}
-
-/*
+			/*
 			cout << "tile->Data = {";
 			for(unsigned char c : tile->Data) {
 				cout << (int)c << " ";
 			}
 			cout << "}" << endl;
 */
+		}
+		// End of line. Check if transparent mode, or opaque.
+		unsigned char eolValue = END_OF_LINE;
+		if(y == (unsigned int)(this->TileHeight - 1)) {
+			eolValue = END_OF_SPRITE;
+		}
+		if(maskMode == OPAQUE_PIXELS) {
+			tile->Data.push_back(eolValue);
+		} else {
+			tile->Data[counterIdx] = eolValue;
 		}
 	}
 }

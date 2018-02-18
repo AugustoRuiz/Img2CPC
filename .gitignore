@@ -1,0 +1,8 @@
+bin
+msvcpp
+!msvcpp/img2cpc.sln
+!msvcpp/img2cpc.vcxproj
+!msvcpp/img2cpc.vcxproj.filters
+obj
+*.dll
+*.o

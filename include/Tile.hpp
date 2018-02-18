@@ -90,7 +90,7 @@ public:
 		string fileName = ss.str();
 		FileUtils::SaveImage(fileName, this->TileWidth, this->TileHeight, rgbValues);
 
-		delete rgbValues;
+		delete[] rgbValues;
 	}
 
 	void GenMaskImage() {
@@ -108,7 +108,7 @@ public:
 		string fileName = ss.str();
 		FileUtils::SaveImage(fileName, this->TileWidth, this->TileHeight, rgbValues);
 
-		delete rgbValues;
+		delete[] rgbValues;
 	}
 
 };
