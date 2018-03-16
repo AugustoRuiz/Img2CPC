@@ -372,7 +372,7 @@ public:
 				ofs << ";; Mask data is interlaced (MASK BYTE, DATA BYTE)." << endl;
 				int currentByte = 0;
 				for (int y = 0; y < vertLimit; ++y) {
-					ofs << ".dw #0x" << toHexString(t->MaskData[currentByte]) << ", #0x" << toHexString(t->Data[currentByte]);
+					ofs << ".db #0x" << toHexString(t->MaskData[currentByte]) << ", #0x" << toHexString(t->Data[currentByte]);
 					currentByte++;
 					for (int x = 0; x < horizLimit - 1; ++x) {
 						ofs << ", #0x" << toHexString(t->MaskData[currentByte]) << ", #0x" << toHexString(t->Data[currentByte]);
