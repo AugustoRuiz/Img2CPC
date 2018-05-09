@@ -91,8 +91,8 @@ Tile* TileExtractor::getTile(FIBITMAP* bmp) {
 }
 
 void TileExtractor::fillTileSCR(Tile* tile, FIBITMAP* bmp) {
-	int scanlineCount = this->Options.ScanlineOrder.size();
-	int charCount = this->TileHeight / scanlineCount;
+	unsigned int scanlineCount = this->Options.ScanlineOrder.size();
+	unsigned int charCount = this->TileHeight / scanlineCount;
 	if((this->TileHeight % scanlineCount) != 0) {
 		charCount += 1;
 	}
