@@ -1,7 +1,7 @@
 #include "img2cpc.hpp"
 
 int initializeParser(ezOptionParser &parser) {
-	parser.overview = "img2cpc - (c) 2007-2015 Retroworks.";
+	parser.overview = "img2cpc - (c) 2007-2018 Retroworks.";
 	parser.syntax = "img2cpc [OPTIONS] fileNames";
 	parser.example = "img2cpc -w 8 -h 8 --outputFormat asm -bn tile -m 0 tiles.png\n";
 	parser.footer = "If you liked this program, drop an email at: augusto.ruiz@gmail.com\n";
@@ -22,6 +22,7 @@ int initializeParser(ezOptionParser &parser) {
 	parser.add("", 0, 0, 0, "Zigzag. Generate data in zigzag order.", "-z", "--zigzag");
 	parser.add("", 0, 0, 0, "HalfFlip. Generate data with odd lines preflipped.", "-hf", "--halfflip");
 	parser.add("", 0, 0, 0, "RLE. Generate data with run length encoding.", "-r", "-rle");
+	parser.add("", 0, 0, 0, "SCR format.", "-scr");
 
 	parser.add("row", 0, 1, 0, "Specifies the byte order, whether the data is stored by rows (default) or by columns. Valid values are row, col.", "-bo", "--byteOrder");
 
@@ -158,6 +159,7 @@ int extractPalette(ezOptionParser &options, ConversionOptions &convOptions) {
 		result = palette.ParseFile(paletteFile);
 	}
 
+/*
 	if (options.isSet("-ta")) {
 		if (convOptions.NoMaskData) {
 			result = -1;
@@ -168,7 +170,8 @@ int extractPalette(ezOptionParser &options, ConversionOptions &convOptions) {
 			palette.Current.push_back(Color(0, 0, 0, 0));
 		}
 	}
-	
+*/
+
 	if (options.isSet("-t")) {
 		int maxValue = palette.Current.size();
 		int value;
@@ -268,13 +271,17 @@ int extractConversionOptions(ezOptionParser &options, ConversionOptions &convOpt
 
 	convOptions.InterlaceMasks = options.isSet("-im");
 
-	if (convOptions.Palette.TransparentIndex == -1 && !convOptions.NoMaskData) {
-		cout << "Warning: No transparent color specified, but mask generation specified. No mask will be generated." << endl;
+	if (convOptions.Palette.TransparentIndex == -1) {
+		cout << "Warning: No transparent color specified. If images with transparent pixels are used, transparent pixels will be considered as such." << endl;
+		convOptions.Palette.TransparentIndex = convOptions.Palette.Current.size();
+		convOptions.Palette.Current.push_back(Color(0, 0, 0, 0));
 	}
 
 	if(!result) {
 		convOptions.InitLutTables();
 	}
+
+	convOptions.IsScr = options.isSet("-scr");
 
 	return result;
 }

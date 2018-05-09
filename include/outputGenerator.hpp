@@ -308,7 +308,7 @@ public:
 					}
 					ofs << endl;
 				}
-				if (options.Palette.TransparentIndex >= 0) {
+				if (!options.NoMaskData && options.Palette.TransparentIndex >= 0) {
 					currentByte = 0;
 					ofs << t->Name << "_MASK:" << endl;
 					for (int y = 0; y < vertLimit; ++y) {
@@ -402,7 +402,7 @@ public:
 					}
 					ofs << endl;
 				}
-				if (options.Palette.TransparentIndex >= 0) {
+				if (!options.NoMaskData && options.Palette.TransparentIndex >= 0) {
 					currentByte = 0;
 					ofs << t->Name << "_MASK::" << endl;
 					for (int y = 0; y < vertLimit; ++y) {
@@ -690,7 +690,7 @@ public:
 				}
 				ofs << "};" << endl;
 
-				if (options.Palette.TransparentIndex >= 0) {
+				if (!options.NoMaskData && options.Palette.TransparentIndex >= 0) {
 					currentByte = 0;
 					ofs << "const u8 " << t->Name << "_mask[" << t->TileWidthInBytes << " * " << t->TileHeight << "] = {" << endl;
 					for (int y = 0; y < vertLimit; ++y) {

@@ -20,6 +20,7 @@ class TileExtractor {
 	void fillTileByRows(Tile* tile, FIBITMAP* bmp);
 	void fillTileByCols(Tile* tile, FIBITMAP* bmp);
 	void fillTileRLE(Tile* tile, FIBITMAP* bmp);
+	void fillTileSCR(Tile* tile, FIBITMAP* bmp);
 	void getByteAt(Tile* tile, FIBITMAP* bmp, int col, int row, bool flip, bool halfFlip);
 
 	ColorAndMaskValues getColorAndMask(FIBITMAP* bmp, int x, int y, bool flip, bool halfFlip);

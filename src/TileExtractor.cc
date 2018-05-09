@@ -77,6 +77,8 @@ Tile* TileExtractor::getTile(FIBITMAP* bmp) {
 	Tile* result = new Tile();
 	if(this->Options.RLE) {
 		this->fillTileRLE(result, bmp);
+	} else if(this->Options.IsScr) {
+		this->fillTileSCR(result, bmp);
 	} else {
 		if(this->Options.PixelOrder == ConversionOptions::ROW) {
 			this->fillTileByRows(result, bmp);
@@ -86,6 +88,38 @@ Tile* TileExtractor::getTile(FIBITMAP* bmp) {
 		}		
 	}
 	return result;
+}
+
+void TileExtractor::fillTileSCR(Tile* tile, FIBITMAP* bmp) {
+	int scanlineCount = this->Options.ScanlineOrder.size();
+	int charCount = this->TileHeight / scanlineCount;
+	if((this->TileHeight % scanlineCount) != 0) {
+		charCount += 1;
+	}
+
+	for (unsigned int y = 0; y < scanlineCount; ++y) {
+		unsigned int remainingBytes = 0x800;
+		unsigned int rowIndex = this->Options.ScanlineOrder[y];
+
+		// Current line to process is rowIndex.
+		for(unsigned int charIdx = 0; charIdx < charCount; ++charIdx) {
+			if(rowIndex < this->TileHeight) {
+				for (unsigned int x = 0; x < this->TileWidth; x += this->ModeIncrement) {
+					getByteAt(tile, bmp, x, rowIndex, false, false);
+					--remainingBytes;
+				}
+				rowIndex += scanlineCount;
+			}
+		}
+		while(remainingBytes > 0) {
+			tile->Data.push_back(0x00);
+			for(unsigned int i=0; i<this->ModeIncrement; ++i) {
+				tile->SourceValues.push_back((unsigned char)0x00);
+				tile->MaskValues.push_back((unsigned char)0x00);
+			}
+			--remainingBytes;
+		}
+	}
 }
 
 #define START_OF_LINE 512

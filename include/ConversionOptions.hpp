@@ -27,6 +27,7 @@ using namespace std;
 #define NO_MASK_DATA_JSON_KEY			"noMaskData"
 #define ONE_FILE_PER_SOURCE_JSON_KEY	"oneFilePerSource"
 #define RLE_JSON_KEY					"rle"
+#define IS_SCR_JSON_KEY					"isScr"
 
 class ConversionOptions {
 public:
@@ -36,7 +37,8 @@ public:
 		Mode(0),
 		ScanlineOrder{ 0,1,2,3,4,5,6,7 },
 		ZigZag(false),
-		CreateFlipLut(false) { };
+		CreateFlipLut(false),
+		IsScr(false) { };
 
 	enum OutputFormat { ASSEMBLER = 0, ASSEMBLER_ASXXXX = 1, BINARY = 2, PURE_C = 3 };
 	enum OutputPalette { NONE, FIRMWARE, HARDWARE };
@@ -83,6 +85,7 @@ public:
 	bool NoMaskData;
 	bool OneFilePerSourceFile;
 	bool RLE;
+	bool IsScr;
 
 	ByteOrder PixelOrder;
 
@@ -138,6 +141,7 @@ public:
 		root[NO_MASK_DATA_JSON_KEY] = this->NoMaskData;
 		root[ONE_FILE_PER_SOURCE_JSON_KEY] = this->OneFilePerSourceFile;
 		root[RLE_JSON_KEY] = this->RLE;
+		root[IS_SCR_JSON_KEY] = this->IsScr;
 		return root;
 	};
 
@@ -164,6 +168,7 @@ public:
 		this->NoMaskData = root[NO_MASK_DATA_JSON_KEY].asBool();
 		this->OneFilePerSourceFile = root[ONE_FILE_PER_SOURCE_JSON_KEY].asBool();
 		this->RLE = root[RLE_JSON_KEY].asBool();
+		this->IsScr = root[IS_SCR_JSON_KEY].asBool();
 		this->InitLutTables();
 	};
 
