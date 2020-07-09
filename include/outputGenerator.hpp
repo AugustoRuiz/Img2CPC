@@ -94,12 +94,12 @@ public:
 
 		hofs << "#ifndef _" << sanitizedFileName << "_" << endl;
 		hofs << "#define _" << sanitizedFileName << "_" << endl << endl;
-		hofs << "extern u8 const " << name << "[" << tableSize << "];" << endl << endl;
+		hofs << "extern unsigned char const " << name << "[" << tableSize << "];" << endl << endl;
 		hofs << "#endif" << endl;
 		hofs.close();
 
 		cofs << "#include \"" << hFileName << "\"" << endl;
-		cofs << "const u8 " << name << "[" << tableSize << "] = { ";
+		cofs << "const unsigned char " << name << "[" << tableSize << "] = { ";
 		for(int i=0;i<tableSize;++i) {
 			if (i > 0) { 
 				cofs << ", ";
@@ -516,7 +516,7 @@ public:
 			vector<int> palette = GetPaletteValues(options);
 			unsigned int numColors = palette.size();
 			if (numColors > 0) {
-				ofs << "extern const u8 ";
+				ofs << "extern const unsigned char ";
 				if(!options.BaseName.empty()) {
 					ofs << options.BaseName << "_";
 				}
@@ -524,13 +524,13 @@ public:
 			}
 
 			if(options.CreateTileset) {
-				ofs << "extern u8* const " ;
+				ofs << "extern unsigned char* const " ;
 				if(!options.BaseName.empty()) {
 					ofs << options.BaseName << "_";
 				}
 				ofs << "tileset[" << numTiles << "];" << endl << endl;
 				if (!(options.InterlaceMasks || options.NoMaskData) && options.Palette.TransparentIndex >= 0) {
-					ofs << "extern u8* const "; 
+					ofs << "extern unsigned char* const "; 
 					if(!options.BaseName.empty()) {
 						ofs << options.BaseName << "_";		
 					}
@@ -550,14 +550,14 @@ public:
 					}
 
 					if (options.InterlaceMasks && options.Palette.TransparentIndex >= 0) {
-						ofs << "extern const u8 " << t->Name << "[2 * " << t->TileWidthInBytes << " * " << t->TileHeight << "];" << endl;
+						ofs << "extern const unsigned char " << t->Name << "[2 * " << t->TileWidthInBytes << " * " << t->TileHeight << "];" << endl;
 					}
 					else if(options.RLE) {
-						ofs << "extern const u8 " << t->Name << "[" << numBytes << "];" << endl;
+						ofs << "extern const unsigned char " << t->Name << "[" << numBytes << "];" << endl;
 					} else {
-						ofs << "extern const u8 " << t->Name << "[" << t->TileWidthInBytes << " * " << t->TileHeight << "];" << endl;
+						ofs << "extern const unsigned char " << t->Name << "[" << t->TileWidthInBytes << " * " << t->TileHeight << "];" << endl;
 						if (!options.NoMaskData && options.Palette.TransparentIndex >= 0) {
-							ofs << "extern const u8 " << t->Name << "_mask[" << t->TileWidthInBytes << " * " << t->TileHeight << "];" << endl;
+							ofs << "extern const unsigned char " << t->Name << "_mask[" << t->TileWidthInBytes << " * " << t->TileHeight << "];" << endl;
 						}
 					}
 				}
@@ -581,7 +581,7 @@ public:
 		if (numColors > 0) {
 			ofs << "// Palette uses " << ConversionOptions::ToString(options.PaletteFormat) << " values." << endl;
 
-			ofs << "const u8 ";
+			ofs << "const unsigned char ";
 			if(!options.BaseName.empty()) { 
 				ofs << options.BaseName << "_";
 			}
@@ -598,7 +598,7 @@ public:
 		unsigned int numTiles = tiles.size();
 		if (numTiles > 0) {
 			if(options.CreateTileset) {
-				ofs << "u8* const ";
+				ofs << "unsigned char* const ";
 				if(!options.BaseName.empty()) {
 					ofs << options.BaseName << "_";
 				}
@@ -611,7 +611,7 @@ public:
 				}
 				ofs << endl << "};" << endl;
 				if (options.Palette.TransparentIndex >= 0 && !(options.InterlaceMasks || options.NoMaskData)) {
-					ofs << "u8* const " << options.BaseName << "_masks_tileset[" << numTiles << "] = { " << endl << "\t";
+					ofs << "unsigned char* const " << options.BaseName << "_masks_tileset[" << numTiles << "] = { " << endl << "\t";
 					for (unsigned int i = 0; i<numTiles; ++i) {
 						if (i > 0) {
 							ofs << ", ";
@@ -646,7 +646,7 @@ public:
 
 			if (options.InterlaceMasks && options.Palette.TransparentIndex >= 0) {
 				ofs << "// Mask data is interlaced (MASK BYTE, DATA BYTE)." << endl;
-				ofs << "const u8 " << t->Name << "[2 * " << t->TileWidthInBytes << " * " << t->TileHeight << "] = {" << endl;
+				ofs << "const unsigned char " << t->Name << "[2 * " << t->TileWidthInBytes << " * " << t->TileHeight << "] = {" << endl;
 				int currentByte = 0;
 				for (int y = 0; y < vertLimit; ++y) {
 					ofs << "\t0x" << toHexString(t->MaskData[currentByte]) << ", 0x" << toHexString(t->Data[currentByte]);
@@ -663,7 +663,7 @@ public:
 				ofs << "};" << endl;
 			}
 			else if(options.RLE) {
-				ofs << "const u8 " << t->Name << "[" << numBytes << "] = {" << endl;
+				ofs << "const unsigned char " << t->Name << "[" << numBytes << "] = {" << endl;
 
 				ofs << "0x" << toHexString(t->Data[0]);
 				for (int x = 1; x < numBytes; ++x) {
@@ -675,7 +675,7 @@ public:
 				ofs << "};" << endl;
 			} else {
 				int currentByte = 0;
-				ofs << "const u8 " << t->Name << "[" << t->TileWidthInBytes << " * " << t->TileHeight << "] = {" << endl;
+				ofs << "const unsigned char " << t->Name << "[" << t->TileWidthInBytes << " * " << t->TileHeight << "] = {" << endl;
 				for (int y = 0; y < vertLimit; ++y) {
 					ofs << "\t0x" << toHexString(t->Data[currentByte]);
 					currentByte++;
@@ -692,7 +692,7 @@ public:
 
 				if (!options.NoMaskData && options.Palette.TransparentIndex >= 0) {
 					currentByte = 0;
-					ofs << "const u8 " << t->Name << "_mask[" << t->TileWidthInBytes << " * " << t->TileHeight << "] = {" << endl;
+					ofs << "const unsigned char " << t->Name << "_mask[" << t->TileWidthInBytes << " * " << t->TileHeight << "] = {" << endl;
 					for (int y = 0; y < vertLimit; ++y) {
 						ofs << "\t0x" << toHexString(t->MaskData[currentByte]);
 						currentByte++;

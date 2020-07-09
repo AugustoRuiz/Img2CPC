@@ -43,6 +43,9 @@ Specifies the CPC Mode to generate data for. Valid values are 0 (default), 1 or 
 `-map, --tilemap`
 Generate tile map
 
+`-nm, --noMasks`
+No mask data. And/Or tables will be used.
+
 `-nt, --noTileset`
 Don't create tileset. Use this if you are creating sprites and do not need a table with all the tile pointers.
 
